@@ -1,336 +1,250 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Squid Game Ultra RP - Articles</title>
-<style>
-  * {
-    box-sizing: border-box;
-  }
-  body {
-    margin: 0; padding: 0;
-    background-color: #0a0a0a;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #eee;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
-  header {
-    background: #111;
-    padding: 1rem 1.5rem;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.8rem;
-  }
-  header h1 {
-    color: #ff66cc;
-    margin: 0;
-    font-weight: 700;
-    user-select: none;
-    font-size: 1.6rem;
-  }
-  .search-filter {
-    display: flex;
-    gap: 0.5rem;
-    flex-grow: 1;
-    max-width: 600px;
-  }
-  input[type="search"], select {
-    flex-grow: 1;
-    padding: 0.6rem 0.8rem;
-    border-radius: 6px;
-    border: none;
-    font-size: 1rem;
-    outline-offset: 2px;
-  }
-  input[type="search"] {
-    background: #222;
-    color: #eee;
-  }
-  select {
-    background: #222;
-    color: #ff66cc;
-    font-weight: 600;
-    cursor: pointer;
-  }
-  .links {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-  }
-  .links a {
-    color: #ff66cc;
-    text-decoration: none;
-    font-weight: 600;
-    border: 1.5px solid #ff66cc;
-    padding: 0.3rem 0.7rem;
-    border-radius: 8px;
-    transition: background 0.3s ease;
-  }
-  .links a:hover {
-    background: #ff66cc;
-    color: #111;
-  }
-  #langSelect {
-    background: #222;
-    color: #ff66cc;
-    border-radius: 6px;
-    padding: 0.4rem 0.6rem;
-    border: none;
-    cursor: pointer;
-    font-weight: 600;
-  }
-  main {
-    flex-grow: 1;
-    padding: 1rem 1.5rem;
-    max-width: 900px;
-    margin: 0 auto;
-    width: 100%;
-  }
-  #articleList {
-    display: grid;
-    grid-template-columns: repeat(auto-fit,minmax(280px,1fr));
-    gap: 1rem;
-  }
-  .article {
-    background: #121212;
-    border-radius: 10px;
-    padding: 1rem;
-    cursor: pointer;
-    transition: box-shadow 0.3s ease;
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-  }
-  .article:hover {
-    box-shadow: 0 0 12px 2px #ff66cc;
-  }
-  .article img {
-    width: 80px;
-    height: 80px;
-    border-radius: 8px;
-    object-fit: cover;
-    flex-shrink: 0;
-  }
-  .article h3 {
-    margin: 0;
-    font-weight: 700;
-    color: #ff66cc;
-    flex-grow: 1;
-  }
-  #fullView {
-    display: none;
-    position: fixed;
-    top: 0; left: 0; width: 100vw; height: 100vh;
-    background: #111e2bdd;
-    backdrop-filter: blur(6px);
-    padding: 2rem;
-    overflow-y: auto;
-    z-index: 9999;
-    color: #eee;
-  }
-  #fullViewContent {
-    max-width: 700px;
-    margin: 0 auto;
-    background: #111;
-    border-radius: 12px;
-    padding: 1.5rem;
-    box-shadow: 0 0 15px #ff66ccaa;
-  }
-  #fullViewContent h2 {
-    margin-top: 0;
-    color: #ff66cc;
-  }
-  #fullViewContent img {
-    width: 100%;
-    max-height: 300px;
-    object-fit: cover;
-    border-radius: 8px;
-    margin-bottom: 1rem;
-  }
-  #fullViewContent p {
-    line-height: 1.4;
-  }
-  #closeFullViewBtn {
-    margin-top: 1rem;
-    padding: 0.5rem 1rem;
-    background: #ff66cc;
-    border: none;
-    border-radius: 6px;
-    color: #111;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.3s ease;
-  }
-  #closeFullViewBtn:hover {
-    background: #e055b8;
-  }
-  #adminPanelLink {
-    background: #222;
-    color: #ff66cc;
-    cursor: pointer;
-    padding: 0.8rem 1.2rem;
-    border-radius: 8px;
-    text-align: center;
-    margin: 1rem auto 0;
-    max-width: 180px;
-    user-select: none;
-    font-weight: 600;
-  }
-  #adminPanel {
-    background: #111;
-    border-radius: 10px;
-    padding: 1rem 1.5rem;
-    max-width: 700px;
-    margin: 1rem auto 3rem;
-    display: none;
-    box-shadow: 0 0 15px #ff66ccaa;
-  }
-  #adminPanel input, #adminPanel textarea {
-    width: 100%;
-    padding: 0.6rem;
-    margin-top: 0.5rem;
-    border-radius: 6px;
-    border: none;
-    font-size: 1rem;
-    background: #222;
-    color: #eee;
-  }
-  #adminPanel textarea {
-    min-height: 100px;
-    resize: vertical;
-  }
-  #adminPanel button {
-    margin-top: 1rem;
-    padding: 0.6rem 1.2rem;
-    background: #ff66cc;
-    border: none;
-    border-radius: 8px;
-    color: #111;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background 0.3s ease;
-  }
-  #adminPanel button:hover {
-    background: #e055b8;
-  }
-  #editList {
-    margin-top: 1rem;
-  }
-  #editList .editItem {
-    background: #222;
-    border-radius: 8px;
-    padding: 0.7rem 1rem;
-    margin-bottom: 1rem;
-  }
-  #editList .editItem input,
-  #editList .editItem textarea {
-    margin-top: 0.3rem;
-  }
-  #editList .editItem textarea {
-    min-height: 70px;
-  }
-  #editList hr {
-    border: none;
-    border-top: 1px solid #444;
-  }
-  /* Responsive */
-  @media (max-width: 600px) {
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Squid Game Ultra Roleplay</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f9f9f9;
+      color: #333;
+    }
     header {
-      justify-content: center;
+      background-color: #ffffff;
+      color: #333;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
-    .search-filter {
-      max-width: 100%;
-      flex-grow: unset;
-      flex-direction: column;
-    }
-    .links {
-      justify-content: center;
+    input[type="text"], input[type="email"], input[type="password"], textarea, select {
       width: 100%;
+      padding: 10px;
+      margin: 5px 0;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .articles {
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+    }
+    .article {
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid #eee;
+      padding: 10px 0;
+      cursor: pointer;
+    }
+    .article img {
+      width: 80px;
+      height: 80px;
+      margin-right: 20px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+    #fullView {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: white;
+      padding: 40px;
+      overflow-y: auto;
+      z-index: 1000;
+    }
+    #fullView button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #0078D7;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    #adminPanelLink {
+      display: block;
+      text-align: center;
+      padding: 15px;
+      background-color: #0078D7;
+      color: white;
+      cursor: pointer;
+      margin: 20px;
+      border-radius: 4px;
     }
     #adminPanel {
-      margin: 1rem 1rem 3rem;
-      max-width: none;
+      display: none;
+      padding: 20px;
+      background: #ffffff;
+      margin: 20px;
+      border-radius: 4px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
-  }
-</style>
+    .status-message {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    .status-success {
+      color: green;
+    }
+    .status-error {
+      color: red;
+    }
+  </style>
 </head>
 <body>
 
 <header>
-  <h1 id="title">Squid Game Ultra RP</h1>
-  <div class="search-filter">
-    <input type="search" id="searchBar" placeholder="Search articles...">
-    <select id="filter">
-      <option value="recent">Most Recent</option>
-      <option value="alpha">Alphabetical</option>
-      <option value="popular">Most Used</option>
-    </select>
-  </div>
-  <select id="langSelect" aria-label="Select Language">
-    <option value="en">English</option>
+  <input type="text" id="searchBar" placeholder="Rechercher un article...">
+  <select id="filter">
+    <option value="recent">Les plus récents</option>
+    <option value="alpha">Ordre alphabétique</option>
+    <option value="popular">Les plus utilisés</option>
+  </select>
+  <select id="languageSelector">
     <option value="fr">Français</option>
+    <option value="en">English</option>
   </select>
 </header>
 
-<main>
-  <div id="articleList" aria-live="polite"></div>
-</main>
+<div class="articles" id="articleList"></div>
 
-<div id="fullView" role="dialog" aria-modal="true" aria-labelledby="fullViewTitle" tabindex="-1">
-  <div id="fullViewContent">
-    <h2 id="fullViewTitle"></h2>
-    <img id="fullViewImg" src="" alt="Article image" />
-    <p id="fullViewContentText"></p>
-    <button id="closeFullViewBtn">Close</button>
-  </div>
+<div id="fullView">
+  <button onclick="closeFullView()">Fermer</button>
+  <div id="fullContent"></div>
 </div>
 
-<div id="adminPanelLink" role="button" tabindex="0" aria-pressed="false">Admin Panel</div>
-
-<div id="adminPanel" aria-hidden="true">
-  <input type="password" id="adminPassword" placeholder="Enter admin password" aria-label="Admin password">
-  <button id="adminLoginBtn">Login</button>
-
+<div id="adminPanelLink">Admin Panel</div>
+<div id="adminPanel">
+  <input type="email" id="adminEmail" placeholder="Votre email">
+  <button onclick="sendVerificationCode()">Envoyer le code</button>
+  <div id="codeSection" style="display:none;">
+    <input type="text" id="verificationCode" placeholder="Code de vérification">
+    <button onclick="verifyCode()">Vérifier le code</button>
+  </div>
+  <div id="passwordSection" style="display:none;">
+    <input type="password" id="adminPassword" placeholder="Mot de passe">
+    <button onclick="checkPassword()">Se connecter</button>
+  </div>
+  <div id="statusMessage" class="status-message"></div>
   <div id="adminContent" style="display:none;">
-    <h3>Add New Article</h3>
-    <input type="text" id="newTitle" placeholder="Title" aria-label="New article title">
-    <input type="text" id="newImage" placeholder="Image URL" aria-label="New article image URL">
-    <textarea id="newContent" placeholder="Content..." aria-label="New article content"></textarea>
-    <button id="addArticleBtn">Add Article</button>
-
-    <h3>Edit Articles</h3>
+    <h3>Ajouter un article</h3>
+    <input type="text" id="newTitle" placeholder="Titre">
+    <input type="text" id="newImage" placeholder="Lien de l'image">
+    <textarea id="newContent" placeholder="Contenu..."></textarea>
+    <button onclick="addArticle()">Ajouter</button>
+    <h3>Modifier les articles</h3>
     <div id="editList"></div>
   </div>
 </div>
 
 <script>
-(() => {
-  // === DATA & STORAGE ===
-  const defaultArticles = [
-    { title: {en:"How to become staff", fr:"Comment devenir staff"}, 
-      img: "https://i.imgur.com/H6gzwYq.jpg", 
-      content: {en:"To become staff, you must apply in the Discord server and pass the test.", fr:"Pour devenir staff, vous devez postuler sur le serveur Discord et réussir le test."},
-      uses: 5,
-      created: Date.now() - 10000000
-    },
-    { title: {en:"Rules to respect", fr:"Comment respecter les règles"},
-      img: "https://i.imgur.com/XS4UfcM.jpg",
-      content: {en:"Here are the game rules you must follow at all times.", fr:"Voici les règles du jeu à respecter en permanence."},
-      uses: 15,
-      created: Date.now() - 5000000
-    },
-    { title: {en:"Beginner guide", fr:"Guide du débutant"},
-      img: "https://i.imgur.com/6R3hZtF.jpg",
-      content: {en:"Welcome to the game! This guide helps new players start.", fr:"Bienvenue dans le jeu ! Ce guide aide les nouveaux joueurs à commencer."},
-      uses: 20,
-      created: Date.now() - 15000000
-    },
-    { title: {en:"How to earn ₩", fr:"Gagner des ₩"},
-      img: "https://i.imgur.com
+let articles = JSON.parse(localStorage.getItem("articles")) || [
+  { title: "Comment devenir staff", img: "https://via.placeholder.com/80", content: "Pour devenir staff..." },
+  { title: "Comment respecter les règles", img: "https://via.placeholder.com/80", content: "Voici les règles..." },
+  { title: "Guide du débutant", img: "https://via.placeholder.com/80", content: "Bienvenue dans le jeu..." },
+  { title: "Gagner des ₩", img: "https://via.placeholder.com/80", content: "Méthodes pour gagner..." },
+  { title: "Rapporter un joueur", img: "https://via.placeholder.com/80", content: "Signaler un abus..." }
+];
 
+function saveArticles() {
+  localStorage.setItem("articles", JSON.stringify(articles));
+}
 
+function displayArticles(filterText = "") {
+  const list = document.getElementById("articleList");
+  list.innerHTML = "";
+  let filtered = articles.filter(a => a.title.toLowerCase().includes(filterText.toLowerCase()));
+  filtered.forEach((a, i) => {
+    const div = document.createElement("div");
+    div.className = "article";
+    div.innerHTML = `<img src="${a.img}"><h4>${a.title}</h4>`;
+    div.onclick = () => {
+      document.getElementById("fullView").style.display = "block";
+      document.getElementById("fullContent").innerHTML = `<h2>${a.title}</h2><img src='${a.img}' style='width:100px'><p>${a.content}</p>`;
+    };
+    list.appendChild(div);
+  });
+}
+
+function closeFullView() {
+  document.getElementById("fullView").style.display = "none";
+}
+
+document.getElementById("searchBar").oninput = (e) => displayArticles(e.target.value);
+displayArticles();
+
+document.getElementById("adminPanelLink").onclick = () => {
+  document.getElementById("adminPanel").style.display = "block";
+};
+
+function sendVerificationCode() {
+  const email = document.getElementById("adminEmail").value;
+  if (validateEmail(email)) {
+    // Simuler l'envoi du code
+    window.verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+    console.log("Code de vérification envoyé à:", email, "Code:", window.verificationCode);
+    document.getElementById("codeSection").style.display = "block";
+    setStatusMessage("Code envoyé à votre email.", "success");
+  } else {
+    setStatusMessage("Email invalide.", "error");
+  }
+}
+
+function verifyCode() {
+  const code = document.getElementById("verificationCode").value;
+  if (code === window.verificationCode) {
+    document.getElementById("passwordSection").style.display = "block";
+    setStatusMessage("Code vérifié. Veuillez entrer le mot de passe.", "success");
+  } else {
+    setStatusMessage("Code incorrect.", "error");
+  }
+}
+
+function checkPassword() {
+  const pwd = document.getElementById("adminPassword").value;
+  if (pwd === "anespass") {
+    document.getElementById("adminContent").style.display = "block";
+    displayEditList();
+    setStatusMessage("Mot de passe valide.", "success");
+  } else {
+    setStatusMessage("Mot de passe invalide.", "error");
+  }
+}
+
+function setStatusMessage(message, type) {
+  const status = document.getElementById("statusMessage");
+  status.textContent = message;
+  status.className = "status-message " + (type === "success" ? "status-success" : "status-error");
+}
+
+function validateEmail(email) {
+  const re = /^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$/;
+  return re.test(email);
+}
+
+function addArticle() {
+  const title = document.getElementById("newTitle").value;
+  const img = document.getElementById("newImage").value;
+  const content = document.getElementById("newContent").value;
+  articles.unshift({ title, img, content });
+  saveArticles();
+  displayArticles();
+  displayEditList();
+}
+
+function displayEditList() {
+  const editList = document.getElementById("editList");
+  editList.innerHTML = "";
+  articles.forEach((a, i) => {
+    editList.innerHTML += \`
+      <input value='\${a.title}' onchange='articles[\${i}].title = this.value; saveArticles(); displayArticles();'><br>
+      <input value='\${a.img}' onchange='articles[\${i}].img = this.value; saveArticles(); displayArticles();'><br>
+      <textarea onchange='articles[\${i
+::contentReference[oaicite:21]{index=21}
+ 
