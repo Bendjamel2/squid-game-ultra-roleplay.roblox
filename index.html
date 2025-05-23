@@ -1,27 +1,41 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Squid Game Ultra Roleplay</title>
   <style>
     body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
     header { background-color: #111; color: white; padding: 10px; text-align: center; }
-    input[type="text"] { width: 100%; padding: 10px; font-size: 16px; }
-    #filter { margin: 10px; }
+    input[type="text"], select, textarea, input[type="password"] {
+      width: 100%; padding: 10px; font-size: 16px; box-sizing: border-box; margin: 5px 0;
+    }
     .articles { display: flex; flex-direction: column; padding: 10px; }
-    .article { display: flex; align-items: center; border-bottom: 1px solid #ccc; padding: 10px; cursor: pointer; }
-    .article img { width: 80px; height: 80px; margin-right: 10px; object-fit: cover; }
-    #fullView { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; padding: 20px; overflow-y: auto; z-index: 1000; }
-    #adminPanelLink { display: block; text-align: center; padding: 10px; background-color: #222; color: white; cursor: pointer; }
+    .article {
+      display: flex; align-items: center; border-bottom: 1px solid #ccc; padding: 10px; cursor: pointer;
+      user-select: none;
+    }
+    .article img { width: 80px; height: 80px; margin-right: 10px; object-fit: cover; flex-shrink: 0; }
+    #fullView {
+      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: white; padding: 20px; overflow-y: auto; z-index: 1000;
+      box-sizing: border-box;
+    }
+    #fullView > button {
+      margin-top: 20px; padding: 10px 20px; font-size: 16px; cursor: pointer;
+    }
+    #adminPanelLink {
+      display: block; text-align: center; padding: 10px; background-color: #222;
+      color: white; cursor: pointer; user-select: none;
+    }
     #adminPanel { display: none; padding: 10px; background: #eee; }
-    button { margin-top: 10px; }
+    button { margin-top: 10px; padding: 10px; font-size: 16px; cursor: pointer; }
   </style>
 </head>
 <body>
 
 <header>
-  <input type="text" id="searchBar" placeholder="Rechercher un article...">
+  <input type="text" id="searchBar" placeholder="Rechercher un article..." autocomplete="off" />
   <select id="filter">
     <option value="recent">Les plus récents</option>
     <option value="alpha">Ordre alphabétique</option>
@@ -35,87 +49,195 @@
 
 <div id="adminPanelLink">Admin Panel</div>
 <div id="adminPanel">
-  <input type="password" id="adminPassword" placeholder="Mot de passe">
-  <button onclick="checkPassword()">Se connecter</button>
+  <input type="password" id="adminPassword" placeholder="Mot de passe" autocomplete="off" />
+  <button id="adminLoginBtn">Se connecter</button>
   <div id="adminContent" style="display:none;">
     <h3>Ajouter un article</h3>
-    <input type="text" id="newTitle" placeholder="Titre"><br>
-    <input type="text" id="newImage" placeholder="Lien de l'image"><br>
-    <textarea id="newContent" placeholder="Contenu..."></textarea><br>
-    <button onclick="addArticle()">Ajouter</button>
+    <input type="text" id="newTitle" placeholder="Titre" />
+    <input type="text" id="newImage" placeholder="Lien de l'image" />
+    <textarea id="newContent" placeholder="Contenu..."></textarea>
+    <button id="addArticleBtn">Ajouter</button>
     <h3>Modifier les articles</h3>
     <div id="editList"></div>
   </div>
 </div>
 
 <script>
-let articles = JSON.parse(localStorage.getItem("articles")) || [
-  { title: "How to become a worker.", img: "https://via.placeholder.com/80", content: "To become a worker, candidates must successfully complete a tryout process designed to evaluate their skills, knowledge, and overall suitability for the role. During the tryout, participants will be assessed on various criteria including professionalism, reliability, and ability to follow instructions. Workers are symbolized by the letter "O" to easily identify their role. They are not allowed to speak in the public chat and are not given any tools, emphasizing a professional and focused environment. Additionally, the system includes a 3-strike policy: if a candidate accumulates three strikes due to mistakes, misconduct, or failure to comply with the rules, they will be disqualified or removed from the tryout process. This ensures a high standard of discipline and quality within the workforce." },
-  { title: "How to become a soldier.", img: "https://via.placeholder.com/80", content: "Pour devenir staff..." },
-  { title: "How to become a manager.", img: "https://via.placeholder.com/80", content: "Pour devenir staff..." },
-  { title: "How to do a tryout.", img: "https://via.placeholder.com/80", content: "Pour devenir staff..." },
-  { title: "How to host a tryout", img: "https://via.placeholder.com/80", content: "Voici les règles..." },
-  { title: "How to play the games.", img: "https://via.placeholder.com/80", content: "Bienvenue dans le jeu..." },
-  { title: "How to win money ₩", img: "https://via.placeholder.com/80", content: "Méthodes pour gagner..." },
-  { title: "Rapporter un joueur", img: "https://via.placeholder.com/80", content: "Signaler un abus..." }
-];
+(() => {
+  let articles = JSON.parse(localStorage.getItem("articles")) || [
+    { title: "How to become a worker.", img: "https://via.placeholder.com/80", content: `To become a worker, candidates must successfully complete a tryout process designed to evaluate their skills, knowledge, and overall suitability for the role. During the tryout, participants will be assessed on various criteria including professionalism, reliability, and ability to follow instructions. Workers are symbolized by the letter "O" to easily identify their role. They are not allowed to speak in the public chat and are not given any tools, emphasizing a professional and focused environment. Additionally, the system includes a 3-strike policy: if a candidate accumulates three strikes due to mistakes, misconduct, or failure to comply with the rules, they will be disqualified or removed from the tryout process. This ensures a high standard of discipline and quality within the workforce.` },
+    { title: "How to become a soldier.", img: "https://via.placeholder.com/80", content: "Pour devenir staff..." },
+    { title: "How to become a manager.", img: "https://via.placeholder.com/80", content: "Pour devenir staff..." },
+    { title: "How to do a tryout.", img: "https://via.placeholder.com/80", content: "Pour devenir staff..." },
+    { title: "How to host a tryout", img: "https://via.placeholder.com/80", content: "Voici les règles..." },
+    { title: "How to play the games.", img: "https://via.placeholder.com/80", content: "Bienvenue dans le jeu..." },
+    { title: "How to win money ₩", img: "https://via.placeholder.com/80", content: "Méthodes pour gagner..." },
+    { title: "Rapporter un joueur", img: "https://via.placeholder.com/80", content: "Signaler un abus..." }
+  ];
 
-function saveArticles() {
-  localStorage.setItem("articles", JSON.stringify(articles));
-}
+  const saveArticles = () => localStorage.setItem("articles", JSON.stringify(articles));
 
-function displayArticles(filterText = "") {
-  const list = document.getElementById("articleList");
-  list.innerHTML = "";
-  let filtered = articles.filter(a => a.title.toLowerCase().includes(filterText.toLowerCase()));
-  filtered.forEach((a, i) => {
-    const div = document.createElement("div");
-    div.className = "article";
-    div.innerHTML = `<img src="${a.img}"><h4>${a.title}</h4>`;
-    div.onclick = () => {
-      document.getElementById("fullView").style.display = "block";
-      document.getElementById("fullView").innerHTML = `<h2>${a.title}</h2><img src='${a.img}' style='width:100px'><p>${a.content}</p><button onclick='closeFullView()'>Fermer</button>`;
-    };
-    list.appendChild(div);
-  });
-}
-
-function closeFullView() {
-  document.getElementById("fullView").style.display = "none";
-}
-
-document.getElementById("searchBar").oninput = (e) => displayArticles(e.target.value);
-displayArticles();
-
-function checkPassword() {
-  const pwd = document.getElementById("adminPassword").value;
-  if (pwd === "anespass") {
-    document.getElementById("adminContent").style.display = "block";
-    displayEditList();
-  } else {
-    alert("Mot de passe invalide");
-  }
-}
-
-function addArticle() {
-  const title = document.getElementById("newTitle").value;
-  const img = document.getElementById("newImage").value;
-  const content = document.getElementById("newContent").value;
-  articles.unshift({ title, img, content });
-  saveArticles();
-  displayArticles();
-  displayEditList();
-}
-
-function displayEditList() {
+  const articleList = document.getElementById("articleList");
+  const fullView = document.getElementById("fullView");
+  const searchBar = document.getElementById("searchBar");
+  const filterSelect = document.getElementById("filter");
+  const adminPanelLink = document.getElementById("adminPanelLink");
+  const adminPanel = document.getElementById("adminPanel");
+  const adminLoginBtn = document.getElementById("adminLoginBtn");
+  const adminPassword = document.getElementById("adminPassword");
+  const adminContent = document.getElementById("adminContent");
+  const newTitle = document.getElementById("newTitle");
+  const newImage = document.getElementById("newImage");
+  const newContent = document.getElementById("newContent");
+  const addArticleBtn = document.getElementById("addArticleBtn");
   const editList = document.getElementById("editList");
-  editList.innerHTML = "";
-  articles.forEach((a, i) => {
-    editList.innerHTML += `<input value='${a.title}' onchange='articles[${i}].title = this.value; saveArticles(); displayArticles();'><br>
-    <input value='${a.img}' onchange='articles[${i}].img = this.value; saveArticles(); displayArticles();'><br>
-    <textarea onchange='articles[${i}].content = this.value; saveArticles(); displayArticles();'>${a.content}</textarea><br><hr>`;
+
+  // Debounce helper
+  function debounce(fn, delay) {
+    let timeout;
+    return (...args) => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => fn(...args), delay);
+    };
+  }
+
+  function sortArticles(list) {
+    switch (filterSelect.value) {
+      case "alpha":
+        return [...list].sort((a, b) => a.title.localeCompare(b.title));
+      case "popular":
+        // Placeholder for popular sorting (could be by views or usage count)
+        return list; // As no data, return as-is
+      case "recent":
+      default:
+        return list; // articles are stored with most recent first already
+    }
+  }
+
+  function displayArticles(filterText = "") {
+    let filtered = articles.filter(a => a.title.toLowerCase().includes(filterText.toLowerCase()));
+    filtered = sortArticles(filtered);
+
+    if (!filtered.length) {
+      articleList.innerHTML = "<p>Aucun article trouvé.</p>";
+      return;
+    }
+
+    let html = "";
+    filtered.forEach((a, i) => {
+      // Use data-index attribute to identify article
+      html += `
+        <div class="article" data-index="${i}">
+          <img src="${a.img}" alt="${a.title}" loading="lazy" />
+          <h4>${a.title}</h4>
+        </div>`;
+    });
+    articleList.innerHTML = html;
+  }
+
+  function closeFullView() {
+    fullView.style.display = "none";
+    fullView.innerHTML = "";
+  }
+
+  articleList.addEventListener("click", e => {
+    const articleDiv = e.target.closest(".article");
+    if (!articleDiv) return;
+    const index = articleDiv.dataset.index;
+    if (index === undefined) return;
+
+    const a = articles[index];
+    fullView.style.display = "block";
+    fullView.innerHTML = `
+      <h2>${a.title}</h2>
+      <img src="${a.img}" alt="${a.title}" style="width:100px; margin: 10px 0;">
+      <p>${a.content}</p>
+      <button id="closeFullViewBtn">Fermer</button>
+    `;
   });
-}
+
+  fullView.addEventListener("click", e => {
+    if (e.target.id === "closeFullViewBtn") closeFullView();
+  });
+
+  searchBar.addEventListener("input", debounce(e => {
+    displayArticles(e.target.value);
+  }, 200));
+
+  filterSelect.addEventListener("change", () => displayArticles(searchBar.value));
+
+  adminPanelLink.addEventListener("click", () => {
+    adminPanel.style.display = adminPanel.style.display === "block" ? "none" : "block";
+  });
+
+  adminLoginBtn.addEventListener("click", () => {
+    if (adminPassword.value === "anespass") {
+      adminContent.style.display = "block";
+      displayEditList();
+    } else {
+      alert("Mot de passe invalide");
+      adminContent.style.display = "none";
+    }
+  });
+
+  addArticleBtn.addEventListener("click", () => {
+    const title = newTitle.value.trim();
+    const img = newImage.value.trim() || "https://via.placeholder.com/80";
+    const content = newContent.value.trim();
+
+    if (!title || !content) {
+      alert("Titre et contenu obligatoires !");
+      return;
+    }
+
+    articles.unshift({ title, img, content });
+    saveArticles();
+    displayArticles(searchBar.value);
+    displayEditList();
+
+    // Clear inputs
+    newTitle.value = "";
+    newImage.value = "";
+    newContent.value = "";
+  });
+
+  function displayEditList() {
+    if (!articles.length) {
+      editList.innerHTML = "<p>Aucun article à modifier.</p>";
+      return;
+    }
+
+    let html = "";
+    articles.forEach((a, i) => {
+      html += `
+        <div style="margin-bottom:20px;">
+          <input type="text" data-index="${i}" data-field="title" value="${a.title}" placeholder="Titre" />
+          <input type="text" data-index="${i}" data-field="img" value="${a.img}" placeholder="Lien image" />
+          <textarea data-index="${i}" data-field="content" placeholder="Contenu">${a.content}</textarea>
+          <hr />
+        </div>
+      `;
+    });
+    editList.innerHTML = html;
+
+    // Add event listeners to inputs and textarea for inline editing
+    editList.querySelectorAll("input, textarea").forEach(el => {
+      el.addEventListener("input", e => {
+        const index = e.target.dataset.index;
+        const field = e.target.dataset.field;
+        if (index !== undefined && field) {
+          articles[index][field] = e.target.value;
+          saveArticles();
+          displayArticles(searchBar.value);
+        }
+      });
+    });
+  }
+
+  // Initial display
+  displayArticles();
+
+})();
 </script>
 
 </body>
