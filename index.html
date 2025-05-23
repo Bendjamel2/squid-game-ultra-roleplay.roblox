@@ -1,283 +1,40 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Squid Game Ultra Roleplay</title>
-  <style>
-    :root {
-      --bg-light: #ffffff;
-      --text-light: #333333;
-      --bg-dark: #121212;
-      --text-dark: #f0f0f0;
-      --primary: #0078D7;
-      --border-light: #ccc;
-      --border-dark: #444;
-      --shadow-light: rgba(0,0,0,0.1);
-      --shadow-dark: rgba(255,255,255,0.1);
-    }
+local adminPanel = script.Parent
+local emailBox = adminPanel:WaitForChild("EmailBox")
+local codeBox = adminPanel:WaitForChild("CodeBox")
+local passwordBox = adminPanel:WaitForChild("PasswordBox")
+local validateButton = adminPanel:WaitForChild("ValidateButton")
+local codeDisplay = adminPanel:WaitForChild("CodeDisplay")
+local articleChanger = adminPanel:WaitForChild("ArticleChanger")
 
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: var(--bg-light);
-      color: var(--text-light);
-      transition: background-color 0.3s, color 0.3s;
-    }
+local generatedCode = tostring(math.random(100000, 999999)) -- Code à 6 chiffres
+codeDisplay.Text = "Code: " .. generatedCode
 
-    body.dark {
-      background-color: var(--bg-dark);
-      color: var(--text-dark);
-    }
-
-    header {
-      background-color: var(--bg-light);
-      color: var(--text-light);
-      padding: 20px;
-      text-align: center;
-      box-shadow: 0 2px 4px var(--shadow-light);
-      transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-
-    body.dark header {
-      background-color: var(--bg-dark);
-      color: var(--text-dark);
-      box-shadow: 0 2px 4px var(--shadow-dark);
-    }
-
-    input[type="text"], input[type="email"], input[type="password"], textarea, select {
-      width: 100%;
-      padding: 10px;
-      margin: 5px 0;
-      font-size: 16px;
-      border: 1px solid var(--border-light);
-      border-radius: 4px;
-      background-color: var(--bg-light);
-      color: var(--text-light);
-      transition: background-color 0.3s, color 0.3s, border-color 0.3s;
-    }
-
-    body.dark input[type="text"],
-    body.dark input[type="email"],
-    body.dark input[type="password"],
-    body.dark textarea,
-    body.dark select {
-      background-color: #222;
-      color: var(--text-dark);
-      border: 1px solid var(--border-dark);
-    }
-
-    .articles {
-      display: flex;
-      flex-direction: column;
-      padding: 20px;
-    }
-
-    .article {
-      display: flex;
-      align-items: center;
-      border-bottom: 1px solid var(--border-light);
-      padding: 10px 0;
-      cursor: pointer;
-      transition: background-color 0.2s;
-    }
-
-    body.dark .article {
-      border-bottom: 1px solid var(--border-dark);
-    }
-
-    .article:hover {
-      background-color: #e6f0ff;
-    }
-
-    body.dark .article:hover {
-      background-color: #333844;
-    }
-
-    .article img {
-      width: 80px;
-      height: 80px;
-      margin-right: 20px;
-      object-fit: cover;
-      border-radius: 8px;
-      border: 1px solid var(--border-light);
-      transition: border-color 0.3s;
-    }
-
-    body.dark .article img {
-      border-color: var(--border-dark);
-    }
-
-    #fullView {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%;
-      height: 100%;
-      background: var(--bg-light);
-      padding: 40px;
-      overflow-y: auto;
-      z-index: 1000;
-      color: var(--text-light);
-      transition: background-color 0.3s, color 0.3s;
-    }
-
-    body.dark #fullView {
-      background: var(--bg-dark);
-      color: var(--text-dark);
-    }
-
-    #fullView button {
-      margin-top: 20px;
-      padding: 10px 20px;
-      background-color: var(--primary);
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
-    #adminPanelLink {
-      display: block;
-      text-align: center;
-      padding: 15px;
-      background-color: var(--primary);
-      color: white;
-      cursor: pointer;
-      margin: 20px;
-      border-radius: 4px;
-      user-select: none;
-    }
-
-    #adminPanel {
-      display: none;
-      padding: 20px;
-      background: var(--bg-light);
-      margin: 20px;
-      border-radius: 4px;
-      box-shadow: 0 2px 4px var(--shadow-light);
-      color: var(--text-light);
-      transition: background-color 0.3s, color 0.3s;
-    }
-
-    body.dark #adminPanel {
-      background: var(--bg-dark);
-      box-shadow: 0 2px 4px var(--shadow-dark);
-      color: var(--text-dark);
-    }
-
-    .status-message {
-      margin-top: 10px;
-      font-weight: bold;
-    }
-
-    .status-success {
-      color: green;
-    }
-
-    .status-error {
-      color: red;
-    }
-
-    /* Toggle button */
-    #themeToggle {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: var(--primary);
-      color: white;
-      border: none;
-      border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      font-size: 20px;
-      cursor: pointer;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-      user-select: none;
-      z-index: 1100;
-    }
-  </style>
-</head>
-<body>
-
-<header>
-  <input type="text" id="searchBar" placeholder="Rechercher un article..." />
-  <select id="filter">
-    <option value="recent">Les plus récents</option>
-    <option value="alpha">Ordre alphabétique</option>
-    <option value="popular">Les plus utilisés</option>
-  </select>
-  <select id="languageSelector">
-    <option value="fr">Français</option>
-    <option value="en">English</option>
-  </select>
-</header>
-
-<div class="articles" id="articleList"></div>
-
-<div id="fullView">
-  <button onclick="closeFullView()">Fermer</button>
-  <div id="fullContent"></div>
-</div>
-
-<div id="adminPanelLink">Admin Panel</div>
-<div id="adminPanel">
-  <input type="email" id="adminEmail" placeholder="Votre email" />
-  <button onclick="sendVerificationCode()">Envoyer le code</button>
-  <div id="codeSection" style="display:none;">
-    <input type="text" id="verificationCode" placeholder="Code de vérification" />
-    <button onclick="verifyCode()">Vérifier le code</button>
-  </div>
-  <div id="passwordSection" style="display:none;">
-    <input type="password" id="adminPassword" placeholder="Mot de passe" />
-    <button onclick="checkPassword()">Se connecter</button>
-  </div>
-  <div id="statusMessage" class="status-message"></div>
-  <div id="adminContent" style="display:none;">
-    <h3>Ajouter un article</h3>
-    <input type="text" id="newTitle" placeholder="Titre" />
-    <input type="text" id="newImage" placeholder="Lien de l'image" />
-    <textarea id="newContent" placeholder="Contenu..."></textarea>
-    <button onclick="addArticle()">Ajouter</button>
-    <h3>Modifier les articles</h3>
-    <div id="editList"></div>
-  </div>
-</div>
-
-<button id="themeToggle" title="Changer thème">🌞</button>
-
-<script>
-  // Articles par défaut
-  let defaultArticles = [
-    { title: "Comment devenir staff", img: "https://via.placeholder.com/80", content: "Pour devenir staff..." },
-    { title: "Comment respecter les règles", img: "https://via.placeholder.com/80", content: "Voici les règles..." },
-    { title: "Guide du débutant", img: "https://via.placeholder.com/80", content: "Bienvenue dans le jeu..." },
-    { title: "Gagner des ₩", img: "https://via.placeholder.com/80", content: "Méthodes pour gagner..." },
-    { title: "Rapporter un joueur", img: "https://via.placeholder.com/80", content: "Signaler un abus..." }
-  ];
-
-  // Charge les articles ou initialise avec par défaut
-  let articles = JSON.parse(localStorage.getItem("articles"));
-  if (!articles || !articles.length) {
-    articles = defaultArticles.slice();
-    localStorage.setItem("articles", JSON.stringify(articles));
-  }
-
-  // Affichage articles
-  function displayArticles(filterText = "") {
-    const list = document.getElementById("articleList");
-    list.innerHTML = "";
-    let filtered = articles.filter(a => a.title.toLowerCase().includes(filterText.toLowerCase()));
-
-    // Tri selon filtre choisi
-    const filter = document.getElementById("filter").value;
-    if(filter === "alpha") {
-      filtered.sort((a,b) => a.title.localeCompare(b.title));
-    } else if(filter === "recent") {
-      // recent
-
- 
+validateButton.MouseButton1Click:Connect(function()
+	local email = emailBox.Text
+	local code = codeBox.Text
+	local password = passwordBox.Text
+	
+	if email == "" then
+		warn("Email manquant")
+		return
+	end
+	
+	if code ~= generatedCode then
+		warn("Code incorrect")
+		return
+	end
+	
+	if password ~= "anespass" then
+		warn("Mot de passe incorrect")
+		return
+	end
+	
+	-- Tout est bon
+	emailBox.Visible = false
+	codeBox.Visible = false
+	passwordBox.Visible = false
+	validateButton.Visible = false
+	codeDisplay.Visible = false
+	
+	articleChanger.Visible = true
+end)
