@@ -1,106 +1,211 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Squid Game Ultra Roleplay</title>
   <style>
+    :root {
+      --bg-light: #ffffff;
+      --text-light: #333333;
+      --bg-dark: #121212;
+      --text-dark: #f0f0f0;
+      --primary: #0078D7;
+      --border-light: #ccc;
+      --border-dark: #444;
+      --shadow-light: rgba(0,0,0,0.1);
+      --shadow-dark: rgba(255,255,255,0.1);
+    }
+
     body {
       font-family: 'Segoe UI', sans-serif;
       margin: 0;
       padding: 0;
-      background-color: #f9f9f9;
-      color: #333;
+      background-color: var(--bg-light);
+      color: var(--text-light);
+      transition: background-color 0.3s, color 0.3s;
     }
+
+    body.dark {
+      background-color: var(--bg-dark);
+      color: var(--text-dark);
+    }
+
     header {
-      background-color: #ffffff;
-      color: #333;
+      background-color: var(--bg-light);
+      color: var(--text-light);
       padding: 20px;
       text-align: center;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 4px var(--shadow-light);
+      transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
+
+    body.dark header {
+      background-color: var(--bg-dark);
+      color: var(--text-dark);
+      box-shadow: 0 2px 4px var(--shadow-dark);
+    }
+
     input[type="text"], input[type="email"], input[type="password"], textarea, select {
       width: 100%;
       padding: 10px;
       margin: 5px 0;
       font-size: 16px;
-      border: 1px solid #ccc;
+      border: 1px solid var(--border-light);
       border-radius: 4px;
+      background-color: var(--bg-light);
+      color: var(--text-light);
+      transition: background-color 0.3s, color 0.3s, border-color 0.3s;
     }
+
+    body.dark input[type="text"],
+    body.dark input[type="email"],
+    body.dark input[type="password"],
+    body.dark textarea,
+    body.dark select {
+      background-color: #222;
+      color: var(--text-dark);
+      border: 1px solid var(--border-dark);
+    }
+
     .articles {
       display: flex;
       flex-direction: column;
       padding: 20px;
     }
+
     .article {
       display: flex;
       align-items: center;
-      border-bottom: 1px solid #eee;
+      border-bottom: 1px solid var(--border-light);
       padding: 10px 0;
       cursor: pointer;
+      transition: background-color 0.2s;
     }
+
+    body.dark .article {
+      border-bottom: 1px solid var(--border-dark);
+    }
+
+    .article:hover {
+      background-color: #e6f0ff;
+    }
+
+    body.dark .article:hover {
+      background-color: #333844;
+    }
+
     .article img {
       width: 80px;
       height: 80px;
       margin-right: 20px;
       object-fit: cover;
       border-radius: 8px;
+      border: 1px solid var(--border-light);
+      transition: border-color 0.3s;
     }
+
+    body.dark .article img {
+      border-color: var(--border-dark);
+    }
+
     #fullView {
       display: none;
       position: fixed;
-      top: 0;
-      left: 0;
+      top: 0; left: 0;
       width: 100%;
       height: 100%;
-      background: white;
+      background: var(--bg-light);
       padding: 40px;
       overflow-y: auto;
       z-index: 1000;
+      color: var(--text-light);
+      transition: background-color 0.3s, color 0.3s;
     }
+
+    body.dark #fullView {
+      background: var(--bg-dark);
+      color: var(--text-dark);
+    }
+
     #fullView button {
       margin-top: 20px;
       padding: 10px 20px;
-      background-color: #0078D7;
+      background-color: var(--primary);
       color: white;
       border: none;
       border-radius: 4px;
       cursor: pointer;
     }
+
     #adminPanelLink {
       display: block;
       text-align: center;
       padding: 15px;
-      background-color: #0078D7;
+      background-color: var(--primary);
       color: white;
       cursor: pointer;
       margin: 20px;
       border-radius: 4px;
+      user-select: none;
     }
+
     #adminPanel {
       display: none;
       padding: 20px;
-      background: #ffffff;
+      background: var(--bg-light);
       margin: 20px;
       border-radius: 4px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 4px var(--shadow-light);
+      color: var(--text-light);
+      transition: background-color 0.3s, color 0.3s;
     }
+
+    body.dark #adminPanel {
+      background: var(--bg-dark);
+      box-shadow: 0 2px 4px var(--shadow-dark);
+      color: var(--text-dark);
+    }
+
     .status-message {
       margin-top: 10px;
       font-weight: bold;
     }
+
     .status-success {
       color: green;
     }
+
     .status-error {
       color: red;
+    }
+
+    /* Toggle button */
+    #themeToggle {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      font-size: 20px;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      user-select: none;
+      z-index: 1100;
     }
   </style>
 </head>
 <body>
 
 <header>
-  <input type="text" id="searchBar" placeholder="Rechercher un article...">
+  <input type="text" id="searchBar" placeholder="Rechercher un article..." />
   <select id="filter">
     <option value="recent">Les plus récents</option>
     <option value="alpha">Ordre alphabétique</option>
@@ -121,21 +226,21 @@
 
 <div id="adminPanelLink">Admin Panel</div>
 <div id="adminPanel">
-  <input type="email" id="adminEmail" placeholder="Votre email">
+  <input type="email" id="adminEmail" placeholder="Votre email" />
   <button onclick="sendVerificationCode()">Envoyer le code</button>
   <div id="codeSection" style="display:none;">
-    <input type="text" id="verificationCode" placeholder="Code de vérification">
+    <input type="text" id="verificationCode" placeholder="Code de vérification" />
     <button onclick="verifyCode()">Vérifier le code</button>
   </div>
   <div id="passwordSection" style="display:none;">
-    <input type="password" id="adminPassword" placeholder="Mot de passe">
+    <input type="password" id="adminPassword" placeholder="Mot de passe" />
     <button onclick="checkPassword()">Se connecter</button>
   </div>
   <div id="statusMessage" class="status-message"></div>
   <div id="adminContent" style="display:none;">
     <h3>Ajouter un article</h3>
-    <input type="text" id="newTitle" placeholder="Titre">
-    <input type="text" id="newImage" placeholder="Lien de l'image">
+    <input type="text" id="newTitle" placeholder="Titre" />
+    <input type="text" id="newImage" placeholder="Lien de l'image" />
     <textarea id="newContent" placeholder="Contenu..."></textarea>
     <button onclick="addArticle()">Ajouter</button>
     <h3>Modifier les articles</h3>
@@ -143,108 +248,36 @@
   </div>
 </div>
 
+<button id="themeToggle" title="Changer thème">🌞</button>
+
 <script>
-let articles = JSON.parse(localStorage.getItem("articles")) || [
-  { title: "Comment devenir staff", img: "https://via.placeholder.com/80", content: "Pour devenir staff..." },
-  { title: "Comment respecter les règles", img: "https://via.placeholder.com/80", content: "Voici les règles..." },
-  { title: "Guide du débutant", img: "https://via.placeholder.com/80", content: "Bienvenue dans le jeu..." },
-  { title: "Gagner des ₩", img: "https://via.placeholder.com/80", content: "Méthodes pour gagner..." },
-  { title: "Rapporter un joueur", img: "https://via.placeholder.com/80", content: "Signaler un abus..." }
-];
+  // Articles par défaut
+  let defaultArticles = [
+    { title: "Comment devenir staff", img: "https://via.placeholder.com/80", content: "Pour devenir staff..." },
+    { title: "Comment respecter les règles", img: "https://via.placeholder.com/80", content: "Voici les règles..." },
+    { title: "Guide du débutant", img: "https://via.placeholder.com/80", content: "Bienvenue dans le jeu..." },
+    { title: "Gagner des ₩", img: "https://via.placeholder.com/80", content: "Méthodes pour gagner..." },
+    { title: "Rapporter un joueur", img: "https://via.placeholder.com/80", content: "Signaler un abus..." }
+  ];
 
-function saveArticles() {
-  localStorage.setItem("articles", JSON.stringify(articles));
-}
-
-function displayArticles(filterText = "") {
-  const list = document.getElementById("articleList");
-  list.innerHTML = "";
-  let filtered = articles.filter(a => a.title.toLowerCase().includes(filterText.toLowerCase()));
-  filtered.forEach((a, i) => {
-    const div = document.createElement("div");
-    div.className = "article";
-    div.innerHTML = `<img src="${a.img}"><h4>${a.title}</h4>`;
-    div.onclick = () => {
-      document.getElementById("fullView").style.display = "block";
-      document.getElementById("fullContent").innerHTML = `<h2>${a.title}</h2><img src='${a.img}' style='width:100px'><p>${a.content}</p>`;
-    };
-    list.appendChild(div);
-  });
-}
-
-function closeFullView() {
-  document.getElementById("fullView").style.display = "none";
-}
-
-document.getElementById("searchBar").oninput = (e) => displayArticles(e.target.value);
-displayArticles();
-
-document.getElementById("adminPanelLink").onclick = () => {
-  document.getElementById("adminPanel").style.display = "block";
-};
-
-function sendVerificationCode() {
-  const email = document.getElementById("adminEmail").value;
-  if (validateEmail(email)) {
-    // Simuler l'envoi du code
-    window.verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
-    console.log("Code de vérification envoyé à:", email, "Code:", window.verificationCode);
-    document.getElementById("codeSection").style.display = "block";
-    setStatusMessage("Code envoyé à votre email.", "success");
-  } else {
-    setStatusMessage("Email invalide.", "error");
+  // Charge les articles ou initialise avec par défaut
+  let articles = JSON.parse(localStorage.getItem("articles"));
+  if (!articles || !articles.length) {
+    articles = defaultArticles.slice();
+    localStorage.setItem("articles", JSON.stringify(articles));
   }
-}
 
-function verifyCode() {
-  const code = document.getElementById("verificationCode").value;
-  if (code === window.verificationCode) {
-    document.getElementById("passwordSection").style.display = "block";
-    setStatusMessage("Code vérifié. Veuillez entrer le mot de passe.", "success");
-  } else {
-    setStatusMessage("Code incorrect.", "error");
-  }
-}
+  // Affichage articles
+  function displayArticles(filterText = "") {
+    const list = document.getElementById("articleList");
+    list.innerHTML = "";
+    let filtered = articles.filter(a => a.title.toLowerCase().includes(filterText.toLowerCase()));
 
-function checkPassword() {
-  const pwd = document.getElementById("adminPassword").value;
-  if (pwd === "anespass") {
-    document.getElementById("adminContent").style.display = "block";
-    displayEditList();
-    setStatusMessage("Mot de passe valide.", "success");
-  } else {
-    setStatusMessage("Mot de passe invalide.", "error");
-  }
-}
+    // Tri selon filtre choisi
+    const filter = document.getElementById("filter").value;
+    if(filter === "alpha") {
+      filtered.sort((a,b) => a.title.localeCompare(b.title));
+    } else if(filter === "recent") {
+      // recent
 
-function setStatusMessage(message, type) {
-  const status = document.getElementById("statusMessage");
-  status.textContent = message;
-  status.className = "status-message " + (type === "success" ? "status-success" : "status-error");
-}
-
-function validateEmail(email) {
-  const re = /^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$/;
-  return re.test(email);
-}
-
-function addArticle() {
-  const title = document.getElementById("newTitle").value;
-  const img = document.getElementById("newImage").value;
-  const content = document.getElementById("newContent").value;
-  articles.unshift({ title, img, content });
-  saveArticles();
-  displayArticles();
-  displayEditList();
-}
-
-function displayEditList() {
-  const editList = document.getElementById("editList");
-  editList.innerHTML = "";
-  articles.forEach((a, i) => {
-    editList.innerHTML += \`
-      <input value='\${a.title}' onchange='articles[\${i}].title = this.value; saveArticles(); displayArticles();'><br>
-      <input value='\${a.img}' onchange='articles[\${i}].img = this.value; saveArticles(); displayArticles();'><br>
-      <textarea onchange='articles[\${i
-::contentReference[oaicite:21]{index=21}
  
